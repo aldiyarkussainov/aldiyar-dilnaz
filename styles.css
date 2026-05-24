@@ -1234,33 +1234,27 @@ body.is-locked .content { opacity: 0; }
 }
 .success__map-btn svg { transition: transform 180ms var(--ease); }
 
-/* Маленькая destructive-кнопка под основной CTA — отменить RSVP */
+/* Очень тихая destructive-ссылка ниже основной кнопки */
 .success__cancel {
   align-self: center;
-  margin-top: 20px;
-  padding: 8px 4px;
+  margin-top: 56px;
+  padding: 6px 4px;
   font-family: var(--f-body);
+  font-weight: 300;
   font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.45);
   background: transparent;
   border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: color 180ms var(--ease), border-color 180ms var(--ease);
+  transition: color 180ms var(--ease);
 }
 @media (hover: hover) {
-  .success__cancel:hover {
-    color: #FFFFFF;
-    border-color: #FFFFFF;
-  }
+  .success__cancel:hover { color: rgba(255, 255, 255, 0.85); }
 }
-.success__cancel:active {
-  color: #FFFFFF;
-  border-color: #FFFFFF;
-}
+.success__cancel:active { color: rgba(255, 255, 255, 0.85); }
 
 /* ─── CONFETTI / ХЛОПУШКА ──────────────────────────────────
    Два очага в нижних углах. Частицы летят к центру и вверх,

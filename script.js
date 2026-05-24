@@ -148,24 +148,35 @@ FIRST_GESTURE_EVENTS.forEach((ev) =>
   document.addEventListener(ev, onFirstGesture, { capture: true, passive: true })
 );
 
+// Флаг: было ли воспроизведение приостановлено внешним фактором
+// (сворачивание браузера, блокировка экрана, переключение таба).
+// Нужен чтобы при возврате авто-возобновить ТОЛЬКО если юзер сам не
+// нажимал mute. Если он явно выключил — не возобновляем.
+let pausedExternally = false;
+
 // Кнопка-тогглер: явный контроль пользователем
 musicBtn.addEventListener("click", (e) => {
   e.stopPropagation();
+  // любое нажатие сбрасывает флаг "внешней паузы" — теперь состояние
+  // отражает желание пользователя
+  pausedExternally = false;
   if (bgm.paused) {
+    restoreMusicPos();
     const p = bgm.play();
     if (p && typeof p.then === "function") {
       p.then(() => musicBtn.classList.remove("is-muted"))
        .catch(() => musicBtn.classList.add("is-muted"));
     }
   } else {
+    saveMusicPos();
     bgm.pause();
     musicBtn.classList.add("is-muted");
   }
 });
 
-// Останавливаем музыку при уходе со страницы. Перед паузой ЗАПОМИНАЕМ
-// позицию в localStorage — при следующем заходе продолжим с того же
-// места (restoreMusicPos() в tryStartMusic).
+// Останавливаем музыку при уходе со страницы (закрытие вкладки,
+// переход на другой URL, swipe-out на мобильном, BFCache).
+// Перед паузой запоминаем позицию — продолжим с того же места.
 const stopMusic = () => {
   try {
     saveMusicPos();
@@ -173,14 +184,38 @@ const stopMusic = () => {
     musicBtn.classList.add("is-muted");
   } catch (_) {}
 };
-// pagehide — главный: закрытие вкладки, навигация на другой URL,
-// swipe-out на мобильном, попадание страницы в BFCache.
 window.addEventListener("pagehide", stopMusic);
-// beforeunload — дублёр для старых браузеров
 window.addEventListener("beforeunload", stopMusic);
 
-// Параллельно сохраняем позицию каждые несколько секунд, пока играет, —
-// на случай, если pagehide вдруг не успеет сработать (бывает на iOS Safari).
+// VISIBILITY: сворачивание браузера, блокировка экрана, переключение
+// таба — pagehide НЕ срабатывает (страница в памяти, не выгружена),
+// но visibilitychange ловит всё это.
+//   hidden  → если играла, паузим и помечаем как «внешняя пауза»
+//   visible → если была внешняя пауза, авто-возобновляем с того же места
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    if (!bgm.paused) {
+      pausedExternally = true;
+      saveMusicPos();
+      bgm.pause();
+      musicBtn.classList.add("is-muted");
+    }
+  } else {
+    if (pausedExternally) {
+      pausedExternally = false;
+      restoreMusicPos();
+      const p = bgm.play();
+      if (p && typeof p.then === "function") {
+        p.then(() => musicBtn.classList.remove("is-muted"))
+         .catch(() => {/* iOS могла отозвать autoplay — оставляем muted */});
+      }
+    }
+  }
+});
+
+// Параллельно сохраняем позицию каждые несколько секунд, пока играет.
+// Страховка на случай, если ни pagehide, ни visibilitychange вдруг
+// не успеют сработать (рекомендуется для iOS Safari).
 let lastSavedAt = 0;
 bgm.addEventListener("timeupdate", () => {
   const now = performance.now();
@@ -190,12 +225,13 @@ bgm.addEventListener("timeupdate", () => {
   }
 });
 
-// «Картаны ашу» — открывается в новом табе, наша вкладка не уходит,
-// pagehide не сработает; глушим явно перед переходом на карту.
-const mapLink = document.getElementById("openMap");
-if (mapLink) {
-  mapLink.addEventListener("click", stopMusic);
-}
+// «Картаны ашу» — обе кнопки (на venue и на success-экране).
+// Открываются в новом табе — наша страница теряет фокус, что
+// автоматически вызовет visibilitychange. Но на всякий случай
+// глушим явно — двойная подстраховка.
+document.querySelectorAll("#openMap, .success__map-btn").forEach((el) => {
+  el.addEventListener("click", stopMusic);
+});
 
 /* ════════════════════════════════════════════════════════════
    3. COUNTDOWN

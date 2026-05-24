@@ -305,7 +305,7 @@ form.querySelectorAll('input[name="attending"]').forEach((r) =>
 const statusEl = document.getElementById("formStatus");
 const submitBtn = form.querySelector(".submit");
 
-form.addEventListener("submit", async (e) => {
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
   statusEl.classList.remove("is-error", "is-success");
@@ -319,48 +319,47 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  submitBtn.disabled = true;
-  submitBtn.querySelector(".submit__label").textContent = "Жіберілуде…";
+  const payload = {
+    ...data,
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+  };
 
-  // helper: пишем в localStorage на случай, если сеть отвалится
-  const cacheKey = "rsvp_unsent";
-  try {
-    const payload = {
-      ...data,
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-    };
-
-    if (CONFIG.rsvpEndpoint.startsWith("http")) {
-      // text/plain — чтобы избежать preflight CORS в Apps Script
-      const res = await fetch(CONFIG.rsvpEndpoint, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("Network response not ok");
-    } else {
-      // endpoint ещё не задан — кладём в localStorage и предупреждаем в консоль
-      const stash = JSON.parse(localStorage.getItem(cacheKey) || "[]");
+  // Optimistic UI: показываем success СРАЗУ — у Google Apps Script бывает
+  // cold start 3-7 сек, пользователь не должен это видеть.
+  // Запрос летит в фоне с keepalive=true (гарантирует доставку даже если
+  // страница успеет закрыться раньше ответа сервера).
+  if (CONFIG.rsvpEndpoint.startsWith("http")) {
+    fetch(CONFIG.rsvpEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch((err) => {
+      // если сеть упала — кэшируем для возможного ручного восстановления
+      console.error("[RSVP] send failed:", err);
+      try {
+        const stash = JSON.parse(localStorage.getItem("rsvp_unsent") || "[]");
+        stash.push(payload);
+        localStorage.setItem("rsvp_unsent", JSON.stringify(stash));
+      } catch (_) {}
+    });
+  } else {
+    // endpoint не настроен — пишем в localStorage и предупреждаем в консоль
+    try {
+      const stash = JSON.parse(localStorage.getItem("rsvp_unsent") || "[]");
       stash.push(payload);
-      localStorage.setItem(cacheKey, JSON.stringify(stash));
+      localStorage.setItem("rsvp_unsent", JSON.stringify(stash));
       console.warn("[RSVP] endpoint not configured — saved to localStorage:", payload);
-    }
-
-    // показываем success-overlay
-    showSuccess(data.attending === "yes");
-
-    form.reset();
-    syncGuestVisibility();
-    statusEl.textContent = "";
-  } catch (err) {
-    console.error(err);
-    statusEl.textContent = "Қате болды. Сәл кейінірек қайталап көріңіз.";
-    statusEl.classList.add("is-error");
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.querySelector(".submit__label").textContent = "Жіберу";
+    } catch (_) {}
   }
+
+  // мгновенно открываем success-экран
+  showSuccess(data.attending === "yes");
+
+  form.reset();
+  syncGuestVisibility();
+  statusEl.textContent = "";
 });
 
 /* ════════════════════════════════════════════════════════════

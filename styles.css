@@ -766,7 +766,9 @@ body.is-locked .content { opacity: 0; }
 .sep {
   display: inline-block;
   margin: 0 0.18em;
-  color: var(--ink-soft);
+  /* наследуем цвет родителя и чуть приглушаем — sep работает на любом фоне */
+  color: inherit;
+  opacity: 0.55;
 }
 
 /* ════════════════════════════════════════════════════════════

@@ -216,13 +216,16 @@
 
         <label class="field" data-show-if-attending="yes">
           <span class="field__label">Адам саны</span>
-          <select name="guests">
+          <select name="guests" id="guestsSelect">
             <option value="1">1 адам</option>
             <option value="2">2 адам</option>
             <option value="3">3 адам</option>
             <option value="4">4 адам</option>
           </select>
         </label>
+
+        <!-- доп. поля имён появляются здесь динамически (по числу гостей) -->
+        <div id="extraNames" data-show-if-attending="yes"></div>
 
         <button type="submit" class="submit">
           <span class="submit__label">Жіберу</span>

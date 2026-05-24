@@ -329,18 +329,50 @@ const io = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
 /* ════════════════════════════════════════════════════════════
-   7. RSVP — показ/скрытие поля «адам саны»
+   7. RSVP — показ/скрытие полей «адам саны» + поля имён доп. гостей
    ════════════════════════════════════════════════════════════ */
-const form     = document.getElementById("rsvpForm");
-const guestRow = form.querySelector('[data-show-if-attending="yes"]');
+const form          = document.getElementById("rsvpForm");
+const guestRows     = form.querySelectorAll('[data-show-if-attending="yes"]');
+const guestsSelect  = document.getElementById("guestsSelect");
+const extraNamesBox = document.getElementById("extraNames");
 
 function syncGuestVisibility() {
   const yes = form.querySelector('input[name="attending"][value="yes"]').checked;
-  guestRow.classList.toggle("is-visible", yes);
+  guestRows.forEach((row) => row.classList.toggle("is-visible", yes));
+  if (!yes && extraNamesBox) extraNamesBox.innerHTML = "";
 }
 form.querySelectorAll('input[name="attending"]').forEach((r) =>
-  r.addEventListener("change", syncGuestVisibility)
+  r.addEventListener("change", () => {
+    syncGuestVisibility();
+    if (r.value === "yes") syncExtraNames();
+  })
 );
+
+// рисуем (или удаляем) input'ы для имён доп. гостей по значению select
+function syncExtraNames() {
+  if (!extraNamesBox) return;
+  const guests = parseInt(guestsSelect.value, 10) || 1;
+  const wanted = Math.max(0, guests - 1); // первый гость — основной name
+
+  // удаляем лишние
+  while (extraNamesBox.children.length > wanted) {
+    extraNamesBox.removeChild(extraNamesBox.lastElementChild);
+  }
+  // добавляем недостающие
+  for (let i = extraNamesBox.children.length; i < wanted; i++) {
+    const idx = i + 2; // 2-й, 3-й, 4-й гость
+    const label = document.createElement("label");
+    label.className = "field";
+    label.innerHTML = `
+      <span class="field__label">${idx}-ші қонақтың есімі</span>
+      <input type="text" name="name_${idx}" autocomplete="off" />
+    `;
+    extraNamesBox.appendChild(label);
+  }
+}
+if (guestsSelect) {
+  guestsSelect.addEventListener("change", syncExtraNames);
+}
 
 /* ════════════════════════════════════════════════════════════
    8. RSVP submit → Google Apps Script
@@ -361,6 +393,16 @@ form.addEventListener("submit", (e) => {
     statusEl.classList.add("is-error");
     return;
   }
+
+  // склеиваем все имена в одну строку: "Алдияр, Бекжан, Мадина"
+  // — в Sheets / Excel это попадёт в одну ячейку
+  const allNames = [data.name];
+  for (let i = 2; i <= 4; i++) {
+    const extra = (data[`name_${i}`] || "").trim();
+    if (extra) allNames.push(extra);
+    delete data[`name_${i}`];
+  }
+  data.name = allNames.join(", ");
 
   const payload = {
     ...data,

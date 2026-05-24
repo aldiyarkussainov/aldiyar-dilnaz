@@ -12,6 +12,31 @@ window.scrollTo(0, 0);
 window.addEventListener("load", () => window.scrollTo(0, 0));
 
 /* ════════════════════════════════════════════════════════════
+   ZOOM LOCK
+   iOS Safari игнорирует maximum-scale в viewport meta для accessibility.
+   Блокируем pinch-zoom программно: iOS-специфичные gesture-события
+   + multi-touch touchmove + double-tap.
+   ════════════════════════════════════════════════════════════ */
+["gesturestart", "gesturechange", "gestureend"].forEach((ev) => {
+  document.addEventListener(ev, (e) => e.preventDefault(), { passive: false });
+});
+
+document.addEventListener("touchmove", (e) => {
+  if (e.touches && e.touches.length > 1) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+let lastTapAt = 0;
+document.addEventListener("touchend", (e) => {
+  const now = Date.now();
+  if (now - lastTapAt < 320) {
+    e.preventDefault();
+  }
+  lastTapAt = now;
+}, { passive: false });
+
+/* ════════════════════════════════════════════════════════════
    КОНФИГ
    ════════════════════════════════════════════════════════════ */
 const CONFIG = {

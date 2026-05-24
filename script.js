@@ -226,11 +226,18 @@ bgm.addEventListener("timeupdate", () => {
 });
 
 // «Картаны ашу» — обе кнопки (на venue и на success-экране).
-// Открываются в новом табе — наша страница теряет фокус, что
-// автоматически вызовет visibilitychange. Но на всякий случай
-// глушим явно — двойная подстраховка.
+// При клике помечаем паузу как «внешнюю», чтобы при возврате на сайт
+// visibilitychange-handler авто-возобновил воспроизведение с того же
+// места — как при сворачивании браузера или блокировке экрана.
 document.querySelectorAll("#openMap, .success__map-btn").forEach((el) => {
-  el.addEventListener("click", stopMusic);
+  el.addEventListener("click", () => {
+    if (!bgm.paused) {
+      pausedExternally = true;
+      saveMusicPos();
+      bgm.pause();
+      musicBtn.classList.add("is-muted");
+    }
+  });
 });
 
 /* ════════════════════════════════════════════════════════════

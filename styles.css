@@ -1008,7 +1008,12 @@ body.is-locked .content { opacity: 0; }
   /* fallback фон на случай отсутствия фото */
   background: var(--ink);
   overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  /* блокируем pinch-zoom и горизонтальный swipe на overlay
+     (на body touch-action есть, но в fixed-стэкинге он не наследуется) */
+  touch-action: pan-y;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;

@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#E8E4DE" />
+  <title>Алдияр & Дильназ · 11.08.2026</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap"
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Аудио прелоадится тихо. Воспроизведение стартует ТОЛЬКО по клику пользователя
+       (политика автоплея браузера). Файл клади в assets/music/. -->
+  <audio id="bgm" src="assets/music/song.mp3" loop preload="auto"></audio>
+</head>
+
+<body class="is-locked">
+  <!-- ════════════════════ PRELOAD ════════════════════
+       Открывается автоматически: монограмма проявляется, бьётся как сердце,
+       затем приближается и растворяется в главный экран. Скрипт навешивает
+       классы .is-beating → .is-zooming → .is-gone по таймингу.
+  -->
+  <section id="preload" class="preload" aria-label="Кіріспе">
+    <svg
+      class="preload__mono"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 225 106"
+      role="img"
+      aria-label="Алдияр & Дильназ"
+    >
+      <path d="M80.798 105H68.728V103.864C69.3907 103.864 69.864 103.675 70.148 103.296C70.432 102.823 70.574 102.397 70.574 102.018L61.628 75.89C61.344 75.2273 60.918 74.896 60.35 74.896C59.782 74.896 59.356 75.18 59.072 75.748C56.516 80.292 52.6347 82.564 47.428 82.564C43.168 82.564 39.8073 80.9073 37.346 77.594C35.5473 75.2273 34.6007 72.5293 34.506 69.5C34.4113 66.376 33.4173 63.7727 31.524 61.69C29.6307 59.5127 27.2167 58.1873 24.282 57.714H23.998C23.3353 57.714 22.8147 58.0927 22.436 58.85C13.064 85.83 8.378 99.5567 8.378 100.03C8.378 100.882 8.662 101.734 9.23 102.586C9.89267 103.438 10.8393 103.864 12.07 103.864V105H0V103.864C3.31333 103.864 5.77467 102.113 7.384 98.61C24.3293 50.1407 32.802 25.6693 32.802 25.196C32.802 24.4387 32.518 23.6813 31.95 22.924C31.4767 22.1667 30.6247 21.788 29.394 21.788L33.654 9.86H47.712V10.996H45.866L76.964 101.166C77.248 101.923 77.7213 102.586 78.384 103.154C79.1413 103.627 79.946 103.864 80.798 103.864V105ZM47.428 81.57C50.6467 81.57 53.392 80.5287 55.664 78.446C57.936 76.2687 59.214 73.5707 59.498 70.352C59.498 69.8787 56.2793 60.3173 49.842 41.668C43.4047 22.924 40.0913 13.5047 39.902 13.41C39.7127 13.3153 39.5233 13.268 39.334 13.268C39.1447 13.268 38.908 13.3153 38.624 13.41C38.4347 13.5047 35.926 20.4627 31.098 34.284C26.27 48.0107 23.856 55.016 23.856 55.3C23.856 56.0573 24.282 56.5307 25.134 56.72C28.1633 57.3827 30.6247 58.8973 32.518 61.264C34.506 63.6307 35.5 66.518 35.5 69.926C35.5 73.2393 36.636 76.032 38.908 78.304C41.2747 80.4813 44.1147 81.57 47.428 81.57Z"/>
+      <path d="M102.895 71.0547C104.113 69.7852 104.723 68.2871 104.723 66.5605C104.723 65.1387 104.299 63.9115 103.453 62.8789C102.539 61.7786 101.388 61.2285 100 61.2285H99.5176C100.415 62.1764 101.066 63.2598 101.473 64.4785C101.693 65.1217 101.955 66.3828 102.26 68.2617C102.429 69.2943 102.641 70.2253 102.895 71.0547ZM97.918 58.2324C100.931 57.4368 102.438 56.1504 102.438 54.373C102.438 53.2559 101.964 52.6973 101.016 52.6973C100.051 52.6973 99.2214 53.1712 98.5273 54.1191C97.8841 54.9824 97.5625 55.9134 97.5625 56.9121C97.5625 57.3184 97.681 57.7585 97.918 58.2324ZM107.744 70.3184L108.277 70.3438C107.99 72.9336 106.771 74.2285 104.621 74.2285C103.385 74.2285 102.353 73.7884 101.523 72.9082C100.135 73.6699 98.6797 74.0508 97.1562 74.0508C94.9557 74.0508 93.0853 73.3398 91.5449 71.918C89.9538 70.4622 89.1582 68.6426 89.1582 66.459C89.1582 64.1738 89.8945 62.3711 91.3672 61.0508C92.5352 59.9844 94.3464 59.1126 96.8008 58.4355L97.2578 58.3086C96.8685 57.5299 96.6738 56.8359 96.6738 56.2266C96.6738 54.6185 97.3763 53.3997 98.7812 52.5703C99.4076 52.1979 100.093 52.0117 100.838 52.0117C101.481 52.0117 102.014 52.2233 102.438 52.6465C102.861 53.0697 103.072 53.6029 103.072 54.2461C103.072 56.3451 101.498 57.8262 98.3496 58.6895C98.8236 59.1634 99.4076 59.4004 100.102 59.4004C100.88 59.4004 101.972 58.8164 103.377 57.6484C104.934 56.362 106.212 55.7188 107.211 55.7188C109.378 55.7188 110.461 56.7767 110.461 58.8926C110.461 60.2298 109.894 60.8984 108.76 60.8984C107.913 60.8984 107.49 60.4499 107.49 59.5527C107.49 58.7064 107.888 58.2832 108.684 58.2832C108.988 58.2832 109.335 58.5033 109.725 58.9434C109.775 58.7402 109.801 58.5794 109.801 58.4609C109.801 57.4792 109.335 56.9883 108.404 56.9883C108.15 56.9883 107.846 57.0475 107.49 57.166C106.712 57.4199 106.145 57.6654 105.789 57.9023L103.834 59.1973C102.937 59.7897 101.82 60.0859 100.482 60.0859C99.196 60.0859 98.2396 59.6712 97.6133 58.8418C94.6003 59.5527 92.5605 60.9408 91.4941 63.0059C90.9694 64.0215 90.707 65.1217 90.707 66.3066C90.707 69.0319 91.8073 71.0801 94.0078 72.4512C95.0065 73.0775 96.1491 73.3906 97.4355 73.3906C98.7559 73.3906 99.9831 73.0775 101.117 72.4512C100.254 71.334 99.7376 70.1152 99.5684 68.7949C99.4837 68.1009 99.4329 67.0938 99.416 65.7734C99.3991 63.7083 99.0605 62.2526 98.4004 61.4062C96.1152 61.9479 94.9727 63.3105 94.9727 65.4941C94.9727 66.4421 95.3535 67.4408 96.1152 68.4902L95.8359 68.9473C94.8542 67.8639 94.3633 66.696 94.3633 65.4434C94.3633 63.3952 95.5312 61.8971 97.8672 60.9492C97.444 60.6615 96.7923 60.4753 95.9121 60.3906V59.8066C97.0462 59.9421 97.9857 60.2383 98.7305 60.6953C99.1875 60.6445 99.5345 60.6191 99.7715 60.6191C101.447 60.6191 102.801 61.2285 103.834 62.4473C104.799 63.5983 105.281 65.0202 105.281 66.7129C105.281 68.6087 104.545 70.2676 103.072 71.6895C103.495 72.8743 104.198 73.4668 105.18 73.4668C106.449 73.4668 107.304 72.4173 107.744 70.3184Z"/>
+      <path d="M160.594 105.5V104.364C161.73 104.364 162.677 103.985 163.434 103.228C164.286 102.376 164.712 101.382 164.712 100.246V15.614C164.712 15.1407 164.665 14.7147 164.57 14.336C163.529 14.4307 162.535 14.5253 161.588 14.62C150.512 15.756 141.377 20.3473 134.182 28.394C127.082 36.4407 123.201 46.002 122.538 57.078L122.396 59.35C122.396 64.8407 124.668 68.6747 129.212 70.852C130.821 71.6093 132.525 71.988 134.324 71.988C137.259 71.988 139.862 70.9467 142.134 68.864C143.838 67.2547 144.974 65.314 145.542 63.042C145.826 61.8113 146.015 60.5807 146.11 59.35L146.536 56.652C147.483 53.1493 149.66 50.4987 153.068 48.7C156.571 46.9013 158.322 44.2033 158.322 40.606H159.458V54.948H158.322V54.522C158.322 53.5753 157.943 52.676 157.186 51.824C156.429 50.972 155.34 50.546 153.92 50.546C152.027 50.546 150.512 51.398 149.376 53.102C148.335 54.806 147.672 56.6993 147.388 58.782C147.199 60.77 146.82 62.7107 146.252 64.604C145.305 67.16 143.743 69.2427 141.566 70.852C139.389 72.3667 136.975 73.124 134.324 73.124C131.673 73.124 129.259 72.3667 127.082 70.852C123.201 68.296 121.26 64.2253 121.26 58.64C121.26 57.504 121.355 56.3207 121.544 55.09C123.437 42.1207 128.928 31.4233 138.016 22.998C147.009 14.6673 157.896 10.4547 170.676 10.36H174.794C187.669 11.212 198.461 16.182 207.17 25.27C215.879 34.358 220.234 45.2447 220.234 57.93C220.234 70.5207 215.879 81.36 207.17 90.448C198.461 99.536 187.669 104.553 174.794 105.5H160.594ZM174.51 104.364C185.302 103.512 194.437 98.684 201.916 89.88C209.395 80.9813 213.134 70.3313 213.134 57.93C213.134 45.434 209.347 34.7367 201.774 25.838C194.39 17.1287 185.255 12.348 174.368 11.496C173.516 11.6853 172.806 12.064 172.238 12.632C171.386 13.484 170.96 14.478 170.96 15.614V100.246C170.96 101.382 171.386 102.329 172.238 103.086C172.901 103.843 173.658 104.269 174.51 104.364Z"/>
+    </svg>
+  </section>
+
+  <!-- ════════════════════ MUSIC TOGGLE ════════════════════ -->
+  <button id="musicToggle" class="music-toggle" type="button" aria-label="Музыканы қосу/өшіру">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4">
+      <path class="music-toggle__bar" d="M5 9v6" />
+      <path class="music-toggle__bar" d="M9 6v12" />
+      <path class="music-toggle__bar" d="M13 9v6" />
+      <path class="music-toggle__bar" d="M17 7v10" />
+      <line class="music-toggle__cross" x1="3" y1="3" x2="21" y2="21" />
+    </svg>
+  </button>
+
+  <main id="content" class="content" aria-hidden="true">
+
+    <!-- ════════════════════ HERO ════════════════════ -->
+    <section class="hero">
+      <div class="hero__rules" aria-hidden="true">
+        <span></span><span></span>
+      </div>
+
+      <div class="hero__title">
+        <h1 class="hero__names">Алдияр Дильназ</h1>
+        <p class="hero__date">11.08.2026</p>
+      </div>
+
+      <figure class="hero__photo">
+        <!-- TODO: положи свою главную фотографию в assets/photos/hero.webp -->
+        <img src="assets/photos/hero.webp" alt="" loading="eager" />
+      </figure>
+
+      <a class="hero__scroll" href="#invite" aria-label="Төмен қарай">
+        <svg viewBox="0 0 24 40" width="14" height="24" fill="none" stroke="currentColor" stroke-width="1">
+          <line x1="12" y1="2" x2="12" y2="34" />
+          <polyline points="6,28 12,34 18,28" />
+        </svg>
+      </a>
+    </section>
+
+    <!-- ════════════════════ INVITATION ════════════════════ -->
+    <section id="invite" class="section invite reveal">
+      <!-- декоративные обручальные кольца — парят за контентом -->
+      <div class="rings" aria-hidden="true">
+        <svg class="ring ring--1" viewBox="0 0 60 36"><circle cx="20" cy="18" r="14"/><circle cx="40" cy="18" r="14"/></svg>
+        <svg class="ring ring--2" viewBox="0 0 60 36"><circle cx="20" cy="18" r="14"/><circle cx="40" cy="18" r="14"/></svg>
+        <svg class="ring ring--3" viewBox="0 0 60 36"><circle cx="20" cy="18" r="14"/><circle cx="40" cy="18" r="14"/></svg>
+        <svg class="ring ring--4" viewBox="0 0 60 36"><circle cx="20" cy="18" r="14"/><circle cx="40" cy="18" r="14"/></svg>
+      </div>
+
+      <div class="invite__content">
+        <p class="eyebrow">Шақыру</p>
+        <h2 class="section__title invite__heading">Құрметті қонақтар</h2>
+        <p class="invite__body">
+          Сіздерді Алдияр мен Дильназдың үйлену тойына арналған ақ дастарханымыздың қадірлі қонағы болуға шақырамыз!
+        </p>
+        <p class="eyebrow invite__signature-eyebrow">Той иелері</p>
+        <p class="invite__signature">Алихан <span>&amp;</span> Алмагуль</p>
+      </div>
+    </section>
+
+    <!-- ════════════════════ COUNTDOWN ════════════════════
+         Фото-фон + ПОВЕРХ него: eyebrow, заголовок и таймер.
+    -->
+    <section class="countdown reveal" aria-label="Тойға дейін">
+      <div class="countdown__stage">
+        <img class="countdown__bg" src="assets/photos/countdown.webp" alt="" loading="lazy" />
+
+        <div class="countdown__content">
+          <div class="countdown__timer" id="countdown">
+            <div class="countdown__cell">
+              <span class="countdown__num" data-unit="days">—</span>
+              <span class="countdown__label">күн</span>
+            </div>
+            <span class="countdown__sep" aria-hidden="true">:</span>
+            <div class="countdown__cell">
+              <span class="countdown__num" data-unit="hours">—</span>
+              <span class="countdown__label">сағат</span>
+            </div>
+            <span class="countdown__sep" aria-hidden="true">:</span>
+            <div class="countdown__cell">
+              <span class="countdown__num" data-unit="minutes">—</span>
+              <span class="countdown__label">минут</span>
+            </div>
+            <span class="countdown__sep" aria-hidden="true">:</span>
+            <div class="countdown__cell">
+              <span class="countdown__num" data-unit="seconds">—</span>
+              <span class="countdown__label">секунд</span>
+            </div>
+          </div>
+
+          <h2 class="countdown__title">Тойға дейін</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════ VENUE ════════════════════
+         Бегущая строка + календарь августа + фото-сцена с адресом.
+    -->
+    <section class="venue reveal">
+      <!-- бегущая строка: full-bleed, повторяет контент дважды для seamless-цикла -->
+      <div class="marquee" aria-label="Күтеміз · 11 тамыз 2026 · 17:00">
+        <div class="marquee__track">
+          <span class="marquee__item">Күтеміз</span>
+          <span class="marquee__dot" aria-hidden="true">✦</span>
+          <span class="marquee__item marquee__item--accent">11 тамыз 2026</span>
+          <span class="marquee__dot" aria-hidden="true">✦</span>
+          <span class="marquee__item">17:00</span>
+          <span class="marquee__dot" aria-hidden="true">✦</span>
+
+          <span class="marquee__item" aria-hidden="true">Күтеміз</span>
+          <span class="marquee__dot" aria-hidden="true">✦</span>
+          <span class="marquee__item marquee__item--accent" aria-hidden="true">11 тамыз 2026</span>
+          <span class="marquee__dot" aria-hidden="true">✦</span>
+          <span class="marquee__item" aria-hidden="true">17:00</span>
+          <span class="marquee__dot" aria-hidden="true">✦</span>
+        </div>
+      </div>
+
+      <!-- календарь августа с обведённым 11-м числом -->
+      <div class="calendar">
+        <p class="calendar__month">Тамыз 2026</p>
+        <div class="calendar__grid" id="calendarGrid" aria-hidden="true"></div>
+      </div>
+
+      <div class="venue__stage">
+        <img class="venue__bg" src="assets/photos/venue.webp" alt="" loading="lazy" />
+
+        <div class="venue__content">
+          <p class="venue__addr">Мекен-жайымыз:</p>
+          <p class="venue__name">Samruk 777 мейрамханасы</p>
+
+          <a id="openMap" class="venue__map-btn"
+             href="https://go.2gis.com/dF8Ie"
+             target="_blank" rel="noopener">
+            <span>Картаны ашу</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4">
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <polyline points="14,6 20,12 14,18" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════ RSVP ════════════════════ -->
+    <section class="section rsvp reveal" id="rsvp">
+      <!-- декоративные кольца на фоне (за формой) -->
+      <div class="rings" aria-hidden="true">
+        <svg class="ring ring--1" viewBox="0 0 60 36"><circle cx="20" cy="18" r="14"/><circle cx="40" cy="18" r="14"/></svg>
+        <svg class="ring ring--2" viewBox="0 0 60 36"><circle cx="20" cy="18" r="14"/><circle cx="40" cy="18" r="14"/></svg>
+        <svg class="ring ring--3" viewBox="0 0 60 36"><circle cx="20" cy="18" r="14"/><circle cx="40" cy="18" r="14"/></svg>
+        <svg class="ring ring--4" viewBox="0 0 60 36"><circle cx="20" cy="18" r="14"/><circle cx="40" cy="18" r="14"/></svg>
+      </div>
+
+      <div class="rsvp__content">
+        <p class="eyebrow">Жауап</p>
+        <h2 class="section__title">Келесіз бе?</h2>
+
+        <form id="rsvpForm" class="form" novalidate>
+        <label class="field">
+          <span class="field__label">Есіміңіз</span>
+          <input type="text" name="name" required autocomplete="name" />
+        </label>
+
+        <fieldset class="field field--radio">
+          <legend class="field__label">Тойға келесіз бе?</legend>
+          <label class="radio">
+            <input type="radio" name="attending" value="yes" required />
+            <span>Иә, келемін</span>
+          </label>
+          <label class="radio">
+            <input type="radio" name="attending" value="no" />
+            <span>Өкінішке орай, келе алмаймын</span>
+          </label>
+        </fieldset>
+
+        <label class="field" data-show-if-attending="yes">
+          <span class="field__label">Адам саны</span>
+          <select name="guests">
+            <option value="1">1 адам</option>
+            <option value="2">2 адам</option>
+            <option value="3">3 адам</option>
+            <option value="4">4 адам</option>
+          </select>
+        </label>
+
+        <button type="submit" class="submit">
+          <span class="submit__label">Жіберу</span>
+        </button>
+
+        <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+      </div>
+    </section>
+
+    <!-- ════════════════════ OUTRO ════════════════════
+         Финальный экран. Фоновое фото на всю высоту, текст поверх,
+         тёмная вуаль для читаемости.
+    -->
+    <section class="outro reveal" aria-label="Қорытынды">
+      <div class="outro__bg">
+        <!-- TODO: положи финальное фото в assets/photos/outro.webp
+             (вертикальное, портретное — пара или атмосферное) -->
+        <img src="assets/photos/outro.webp" alt="" loading="lazy" />
+      </div>
+
+      <div class="outro__overlay">
+        <p class="outro__text">Қадірлі қонағымыз болыңыздар</p>
+        <p class="outro__mono" aria-hidden="true">A&nbsp;&amp;&nbsp;D</p>
+        <p class="outro__date">11<span class="sep">·</span>08<span class="sep">·</span>2026</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ════════════════════ SUCCESS OVERLAY ════════════════════
+       Открывается после успешной отправки RSVP.
+       Кнопка «Қайта оралу» — обратно к приглашению.
+       Хлопушка-конфетти триггерится только при «Иә, келемін».
+  -->
+  <section class="success" id="successScreen" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <!-- фоновое фото на весь экран (положи в assets/photos/success.webp) -->
+    <img class="success__bg" src="assets/photos/success.webp" alt="" loading="lazy" />
+
+    <header class="success__header">
+      <button class="success__back" id="successBack" type="button">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="14,6 8,12 14,18" />
+          <line x1="8" y1="12" x2="20" y2="12" />
+        </svg>
+        <span>Қайта оралу</span>
+      </button>
+    </header>
+
+    <div class="success__body">
+      <p class="eyebrow">Рахмет</p>
+      <h2 class="success__title" id="successTitle">Жауабыңыз қабылданды</h2>
+      <p class="success__sub" id="successSub">Тойымызда сізді күтеміз</p>
+
+      <div class="success__info">
+        <div class="success__row">
+          <p class="success__label">Күні</p>
+          <p class="success__value">11 тамыз 2026</p>
+        </div>
+        <div class="success__row">
+          <p class="success__label">Уақыты</p>
+          <p class="success__value">17<span class="sep">:</span>00</p>
+        </div>
+        <div class="success__row">
+          <p class="success__label">Орны</p>
+          <p class="success__value">
+            Samruk 777
+            <span class="success__addr">Астана, Беимбет Майлин 20/10</span>
+          </p>
+        </div>
+      </div>
+
+      <a class="success__map-btn" href="https://go.2gis.com/dF8Ie" target="_blank" rel="noopener">
+        <span>Картаны ашу</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4">
+          <line x1="4" y1="12" x2="20" y2="12" />
+          <polyline points="14,6 20,12 14,18" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- хлопушка-конфетти, частицы генерятся JS из левого и правого нижних углов -->
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

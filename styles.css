@@ -1,0 +1,1244 @@
+/* ════════════════════════════════════════════════════════════
+   FONTS
+   ════════════════════════════════════════════════════════════ */
+@font-face {
+  font-family: "Doppelganger";
+  src: url("assets/fonts/Doppelganger.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  /* swap — пока шрифт грузится, показываем fallback (Cormorant italic),
+     потом подменяем без FOIT. Для приглашения это правильное поведение. */
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mirra";
+  src: url("assets/fonts/Mirra.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TOKENS
+   ════════════════════════════════════════════════════════════ */
+:root {
+  /* палитра — один песочный фон + два уровня графитного текста + волосяная линия */
+  --bg:        #E8E4DE;
+  --bg-soft:   #EEEAE3;
+  --ink:       #1A1A1A;
+  --ink-soft:  #6B6663;
+  --ink-faint: #A6A19B;
+  --line:      rgba(26, 26, 26, 0.16);
+
+  /* единственный акцентный — приглушённый пастельно-розовый. Используем
+     только для дат-акцентов; всё остальное в графитной шкале. */
+  --accent:    #B98E84;
+
+  /* типографика */
+  --f-serif:   "Mirra", "Cormorant Garamond", "Times New Roman", serif;
+  --f-script:  "Doppelganger", "Cormorant Garamond", cursive;
+  --f-body:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* радиусы — всего два, как требует чек-лист */
+  --r-sm: 2px;
+  --r-md: 8px;
+
+  /* анимация */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* ширина «листа» */
+  --w: 420px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESET
+   ════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--f-body);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+body.is-locked { overflow: hidden; height: 100vh; }
+
+img { display: block; max-width: 100%; height: auto; }
+
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--ink); color: var(--bg); }
+
+/* ════════════════════════════════════════════════════════════
+   PRELOAD
+   Поведение управляется тремя классами с body/preload:
+   1) при загрузке — fade-in логотипа (0 → 1)
+   2) .is-beating — пульс "сердцебиение" (lub-dub) 3 цикла
+   3) .is-zooming — наезд камеры + растворение
+   4) .is-gone — снимает фиксацию и скрывает оверлей
+   ════════════════════════════════════════════════════════════ */
+.preload {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: grid;
+  place-items: center;
+  transition: opacity 600ms var(--ease), visibility 600ms var(--ease);
+}
+.preload.is-gone { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.preload__mono {
+  color: var(--ink);
+  fill: currentColor;
+  width: clamp(160px, 48vw, 240px);
+  height: auto;
+  transform-origin: center center;
+
+  /* лёгкий вход. fill-mode: both → до старта применяется state `from`
+     (opacity:0), после — состояние `to` (opacity:1, scale:1) сохраняется.
+     При смене animation на heartbeat базовая opacity SVG = 1 (initial),
+     поэтому монограмма не мигает между фазами. */
+  animation: monoFadeIn 500ms var(--ease) 100ms both;
+}
+
+/* фаза 2: heartbeat — двойной удар lub-dub, 2 повтора.
+   Финальный кадр keyframes — scale(1), что совпадает с базой → плавный
+   переход к фазе zoom без рывка. */
+.preload.is-beating .preload__mono {
+  animation: heartbeat 0.9s ease-in-out 0s 2 both;
+}
+
+/* фаза 3: zoom-in + растворение */
+.preload.is-zooming .preload__mono {
+  animation: monoZoom 700ms cubic-bezier(0.55, 0, 0.7, 0.3) 0s forwards;
+}
+
+@keyframes monoFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/*  lub-dub: короткий первый удар, чуть длиннее второй, длинная пауза
+    проценты: 0 базовая → 12 lub-вверх → 22 lub-вниз →
+              30 dub-вверх (сильнее) → 42 dub-вниз → 100 покой    */
+@keyframes heartbeat {
+  0%   { transform: scale(1);    }
+  12%  { transform: scale(1.07); }
+  22%  { transform: scale(1);    }
+  30%  { transform: scale(1.13); }
+  42%  { transform: scale(1);    }
+  100% { transform: scale(1);    }
+}
+
+@keyframes monoZoom {
+  0%   { transform: scale(1);   opacity: 1; }
+  60%  { transform: scale(2.4); opacity: 0.8; }
+  100% { transform: scale(6);   opacity: 0; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   MUSIC TOGGLE
+   ════════════════════════════════════════════════════════════ */
+.music-toggle {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 50;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(232, 228, 222, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms var(--ease);
+}
+.music-toggle.is-shown {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.music-toggle__cross {
+  stroke-dasharray: 28;
+  stroke-dashoffset: 28;
+  transition: stroke-dashoffset 220ms var(--ease);
+}
+.music-toggle.is-muted .music-toggle__cross { stroke-dashoffset: 0; }
+
+.music-toggle__bar {
+  transform-origin: center;
+  animation: barIdle 1400ms ease-in-out infinite;
+}
+.music-toggle__bar:nth-child(2) { animation-delay: 200ms; }
+.music-toggle__bar:nth-child(3) { animation-delay: 400ms; }
+.music-toggle__bar:nth-child(4) { animation-delay: 100ms; }
+
+.music-toggle.is-muted .music-toggle__bar { animation: none; }
+
+@keyframes barIdle {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(0.55); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   LAYOUT
+   ════════════════════════════════════════════════════════════ */
+.content {
+  width: 100%;
+  max-width: var(--w);
+  margin: 0 auto;
+  background: var(--bg);
+  position: relative;
+  transition: opacity 600ms var(--ease) 200ms;
+}
+body.is-locked .content { opacity: 0; }
+
+.section {
+  padding: 88px 32px;
+  position: relative;
+}
+
+.section__title {
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: clamp(22px, 6vw, 28px);
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: var(--ink);
+  margin-bottom: 32px;
+  white-space: nowrap;
+}
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   HERO — фото full-bleed на весь экран, имена и стрелка поверх
+   ════════════════════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ФОТО — фон на весь hero */
+.hero__photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+}
+.hero__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* пара на студийном фото смещена влево — двигаем view-окно к 36%,
+     чтобы при cover пара оказалась в центре экрана */
+  object-position: 36% center;
+}
+/* плейсхолдер на случай отсутствия фото */
+.hero__photo::after {
+  content: "положи фото в assets/photos/hero.webp";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  background: var(--bg-soft);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* две тонкие вертикальные линии — поверх фото, на самом краю «листа» */
+.hero__rules {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.hero__rules span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(26, 26, 26, 0.18);
+}
+.hero__rules span:first-child  { left: 0; }
+.hero__rules span:last-child   { right: 0; }
+
+/* ИМЕНА — над головами пары, в верхней четверти */
+.hero__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 72px;
+  z-index: 2;
+  text-align: center;
+}
+.hero__names {
+  font-family: var(--f-serif);
+  font-weight: 400;
+  font-size: clamp(36px, 12vw, 52px);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.hero__date {
+  font-family: var(--f-serif);
+  font-size: clamp(17px, 5vw, 22px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-top: 16px;
+  letter-spacing: 0.22em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* градиентный переход к секции invite (cream).
+   На фото — фотофон, на градиенте — белёсая дымка → cream.
+   Имена сидят прямо на этой дымке, читаются как на «листе». */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 38%;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 228, 222, 0)   0%,
+    rgba(232, 228, 222, 0.55) 50%,
+    var(--bg)                100%
+  );
+  pointer-events: none;
+}
+
+.hero__scroll {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  z-index: 3;
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  transition: color 180ms var(--ease);
+  /* лёгкая «подсказка скроллить» — движение по Y + дыхание opacity,
+     ease-in-out, бесконечный цикл. Не spring и не bounce. */
+  animation: scrollHint 1.8s ease-in-out infinite;
+}
+.hero__scroll:hover { color: var(--ink); }
+
+@keyframes scrollHint {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateX(-50%) translateY(8px);
+    opacity: 1;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   INVITE
+   ════════════════════════════════════════════════════════════ */
+.invite {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding-top: 120px;
+  padding-bottom: 120px;
+  /* изолируем stacking context — птички уверенно за контентом */
+  isolation: isolate;
+}
+.invite__content {
+  position: relative;
+  z-index: 1;
+}
+
+.invite__body {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink-soft);
+  max-width: 30ch;
+  margin: 0 auto 36px;
+}
+
+/* eyebrow прямо над подписью — отбивка вверх, чтоб не залипал к body */
+.invite__signature-eyebrow {
+  margin-top: 12px;
+  margin-bottom: 14px;
+}
+
+/* ─── RINGS ──────────────────────────────────────────────
+   Декоративные обручальные кольца. Парят на месте — лёгкое
+   плавание по эллипсу + микро-вращение. Через секцию НЕ пролетают.
+   Полупрозрачные, за контентом.
+   ─────────────────────────────────────────────────────── */
+.rings {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.ring {
+  position: absolute;
+  color: var(--ink-soft);
+  fill: none;
+  stroke: currentColor;
+  /* stroke в SVG масштабируется вместе с элементом; чтобы линия осталась
+     тонкой на любом размере, используем vector-effect */
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+/* четыре кольца разных размеров, по углам секции, со своим темпом */
+.ring--1 { top:  8%;  left:  6%;  width:  72px; animation: ringFloatA 14s ease-in-out  0s infinite; }
+.ring--2 { top: 24%;  right: 4%;  width:  54px; animation: ringFloatB 18s ease-in-out  3s infinite; }
+.ring--3 { bottom: 22%; left: 8%; width:  44px; animation: ringFloatB 16s ease-in-out  7s infinite; }
+.ring--4 { bottom: 6%;  right: 10%; width: 64px; animation: ringFloatA 20s ease-in-out 11s infinite; }
+
+/* появление + дыхание. Не уезжают за пределы своей зоны. */
+@keyframes ringFloatA {
+  0%   { opacity: 0;    transform: translate(0, 0)        rotate(-6deg); }
+  10%  { opacity: 0.22; }
+  50%  {                transform: translate(10px, -8px) rotate( 4deg); }
+  90%  { opacity: 0.22; }
+  100% { opacity: 0;    transform: translate(0, 0)        rotate(-6deg); }
+}
+@keyframes ringFloatB {
+  0%   { opacity: 0;    transform: translate(0, 0)         rotate( 5deg); }
+  10%  { opacity: 0.18; }
+  50%  {                transform: translate(-8px, 10px)  rotate(-4deg); }
+  90%  { opacity: 0.18; }
+  100% { opacity: 0;    transform: translate(0, 0)         rotate( 5deg); }
+}
+.invite__signature {
+  font-family: var(--f-script);
+  /* рукописные шрифты обычно крупнее, но визуально легче — поднимаем размер */
+  font-size: 34px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.invite__signature span {
+  font-size: 0.72em;
+  color: var(--ink-soft);
+  margin: 0 4px;
+  vertical-align: 0.05em;
+}
+
+/* ════════════════════════════════════════════════════════════
+   COUNTDOWN — full-bleed фото, ВСЁ поверх: eyebrow + title + timer
+   ════════════════════════════════════════════════════════════ */
+.countdown {
+  position: relative;
+  /* без боковых padding — фото на всю ширину «листа» */
+  padding: 0;
+}
+
+/* «сцена» — flex-контейнер, фото и вуаль абсолютные слои на фоне,
+   текстовый блок — в потоке, центрируется автоматически */
+.countdown__stage {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--bg-soft);
+  isolation: isolate;
+  display: flex;
+  /* контент прижат к низу — верх фото (где лица) остаётся чистым */
+  align-items: flex-end;
+  justify-content: center;
+  padding: 32px 32px 48px;
+}
+.countdown__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+/* затемнение направленное: верх почти прозрачен (лица не страдают),
+   плотнеет к низу — под таймером и заголовком читаемый тёмный фон */
+.countdown__stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.05) 0%,
+    rgba(0, 0, 0, 0.10) 40%,
+    rgba(0, 0, 0, 0.35) 75%,
+    rgba(0, 0, 0, 0.58) 100%
+  );
+  pointer-events: none;
+}
+
+/* контент поверх фото */
+.countdown__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.countdown__title {
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: clamp(22px, 6vw, 28px);
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: #FFFFFF;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+  margin-top: 22px;
+}
+
+.countdown__timer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(6px, 2vw, 12px);
+}
+.countdown__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 48px;
+}
+.countdown__num {
+  font-family: var(--f-body);
+  font-weight: 300;
+  font-size: clamp(36px, 11vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: #FFFFFF;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+.countdown__label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+.countdown__sep {
+  font-family: var(--f-body);
+  font-weight: 300;
+  font-size: clamp(32px, 10vw, 46px);
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.55);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+  user-select: none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   VENUE — место торжества
+   1) бегущая строка (full-bleed) с заголовком и датой
+   2) календарь с обведённым 11-м
+   3) фото-сцена с названием места и кнопкой карты
+   ════════════════════════════════════════════════════════════ */
+.venue {
+  text-align: center;
+  padding: 0;
+}
+
+/* ─── MARQUEE ─────────────────────────────────────────
+   Без верхнего/нижнего margin — приклеена встык к countdown
+   сверху и к calendar снизу. */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 0;
+}
+.marquee__track {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  width: max-content;
+  white-space: nowrap;
+  /* линейный бег — без acceleration. translateX от 0 до -50%
+     (половина — это длина одной копии контента, далее цикл бесшовный) */
+  animation: marqueeRun 36s linear infinite;
+}
+.marquee__item {
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: clamp(18px, 4.5vw, 22px);
+  letter-spacing: 0.05em;
+  color: var(--ink);
+}
+.marquee__item--accent {
+  color: var(--accent);
+  font-weight: 500;
+}
+.marquee__dot {
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+@keyframes marqueeRun {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── CALENDAR ────────────────────────────────────── */
+.calendar {
+  text-align: center;
+  padding: 56px 32px 64px;
+}
+.calendar__month {
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  max-width: 320px;
+  margin: 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+.calendar__dow {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding-bottom: 10px;
+}
+.calendar__day {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  color: var(--ink-soft);
+  border-radius: 999px;
+}
+.calendar__day--empty { color: transparent; }
+.calendar__day--target {
+  position: relative;
+  color: var(--accent);
+  font-weight: 500;
+  /* кружок-обведение поверх ячейки */
+}
+.calendar__day--target::after {
+  content: "";
+  position: absolute;
+  inset: 4%;
+  border: 1.4px solid var(--accent);
+  border-radius: 999px;
+}
+
+/* «сцена» — фото-фон с тёмной вуалью, контент поверх */
+.venue__stage {
+  position: relative;
+  margin: 0 -32px;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--bg-soft);
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+.venue__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.venue__stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.34) 45%,
+    rgba(0, 0, 0, 0.52) 100%
+  );
+  pointer-events: none;
+}
+
+.venue__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.venue__name {
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: clamp(22px, 6vw, 28px);
+  line-height: 1.2;
+  color: #FFFFFF;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+  margin-bottom: 12px;
+}
+.venue__addr {
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.55;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+  margin-bottom: 32px;
+}
+
+.venue__map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  transition: background-color 180ms var(--ease), border-color 180ms var(--ease);
+}
+.venue__map-btn:hover,
+.venue__map-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  border-color: rgba(255, 255, 255, 0.92);
+  outline: none;
+}
+.venue__map-btn svg {
+  transition: transform 180ms var(--ease);
+}
+.venue__map-btn:hover svg { transform: translateX(3px); }
+
+.sep {
+  display: inline-block;
+  margin: 0 0.18em;
+  color: var(--ink-soft);
+}
+
+/* ════════════════════════════════════════════════════════════
+   RSVP
+   ════════════════════════════════════════════════════════════ */
+.rsvp {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.rsvp__content {
+  position: relative;
+  z-index: 1;
+}
+.rsvp .section__title { margin-bottom: 32px; }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.field { display: block; }
+.field__label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.field input[type="text"],
+.field select,
+.field textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 8px 0;
+  transition: border-color 180ms var(--ease);
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-bottom-color: var(--ink);
+}
+.field textarea { resize: none; }
+
+.field--radio { border: 0; }
+.field--radio .field__label { padding: 0; }
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 14px;
+}
+.radio input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  flex-shrink: 0;
+}
+.radio input::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ink);
+  transform: scale(0);
+  transition: transform 160ms var(--ease);
+}
+.radio input:checked::after { transform: scale(1); }
+
+[data-show-if-attending] {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 240ms var(--ease), opacity 200ms var(--ease);
+}
+[data-show-if-attending].is-visible {
+  max-height: 80px;
+  opacity: 1;
+}
+
+.submit {
+  align-self: flex-start;
+  padding: 14px 36px;
+  border: 1px solid var(--ink);
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: background-color 180ms var(--ease), color 180ms var(--ease);
+}
+.submit:hover, .submit:focus-visible {
+  background: var(--ink);
+  color: var(--bg);
+  outline: none;
+}
+.submit[disabled] { opacity: 0.5; cursor: wait; }
+
+.form__status {
+  font-size: 13px;
+  color: var(--ink-soft);
+  min-height: 1.2em;
+}
+.form__status.is-error { color: #B23A3A; }
+.form__status.is-success { color: var(--ink); }
+
+/* ════════════════════════════════════════════════════════════
+   OUTRO — фото-фон, текст поверх с тёмной вуалью
+   ════════════════════════════════════════════════════════════ */
+.outro {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  /* фон на случай отсутствия фото — деликатный плейсхолдер */
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.outro__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.outro__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+/* плейсхолдер при отсутствии файла — мягко тает в чёрный */
+.outro__bg::after {
+  content: "положи фото в assets/photos/outro.jpg";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* тёмная вуаль поверх фото — почти прозрачна сверху (лица чистые),
+   плотнеет к низу, чтобы текст и большое A&D читались */
+.outro__overlay {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 80px 32px 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* контент прижат к низу — верхняя часть фото (с лицами) остаётся чистой */
+  justify-content: flex-end;
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 12, 10, 0.10) 0%,
+    rgba(15, 12, 10, 0.20) 40%,
+    rgba(15, 12, 10, 0.50) 75%,
+    rgba(15, 12, 10, 0.70) 100%
+  );
+}
+
+.outro__text {
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: clamp(17px, 4.8vw, 21px);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  color: var(--bg);
+  max-width: 26ch;
+  margin: 0 auto 32px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+}
+.outro__mono {
+  font-family: var(--f-script);
+  font-size: clamp(72px, 22vw, 110px);
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--bg);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+.outro__date {
+  font-family: var(--f-body);
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 400;
+  color: var(--bg);
+  margin-top: 20px;
+  letter-spacing: 0.32em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+}
+
+/* ════════════════════════════════════════════════════════════
+   SUCCESS OVERLAY — после отправки RSVP, фото на весь экран
+   ════════════════════════════════════════════════════════════ */
+.success {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  /* fallback фон на случай отсутствия фото */
+  background: var(--ink);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  isolation: isolate;
+  transition:
+    opacity    400ms var(--ease),
+    visibility 400ms var(--ease);
+}
+.success.is-shown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* фоновое фото на весь экран */
+.success__bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+/* плейсхолдер на случай отсутствия файла */
+.success::before {
+  content: "положи фото в assets/photos/success.webp";
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+  z-index: 0;
+}
+/* тёмная вуаль — почти прозрачно сверху (фото с лицами чистое),
+   плотнеет к низу под текстом и кнопкой */
+.success::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 12, 10, 0.18) 0%,
+    rgba(15, 12, 10, 0.30) 35%,
+    rgba(15, 12, 10, 0.58) 75%,
+    rgba(15, 12, 10, 0.78) 100%
+  );
+  pointer-events: none;
+}
+
+.success__header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+}
+.success__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--r-sm);
+  transition: background-color 180ms var(--ease);
+}
+.success__back:hover { background: rgba(0, 0, 0, 0.36); }
+.success__back svg { transition: transform 180ms var(--ease); }
+.success__back:hover svg { transform: translateX(-3px); }
+
+.success__body {
+  position: relative;
+  z-index: 2;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px 32px 80px;
+  text-align: center;
+  /* контент прижат к нижней половине, чтобы не перекрывать лица сверху */
+  min-height: calc(100vh - 72px);
+  min-height: calc(100svh - 72px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #FFFFFF;
+}
+
+.success__body .eyebrow {
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+.success__title {
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: clamp(24px, 6.5vw, 30px);
+  line-height: 1.25;
+  color: #FFFFFF;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+  margin: 12px 0 14px;
+}
+.success__sub {
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  margin-bottom: 40px;
+}
+
+.success__info {
+  text-align: left;
+  margin-bottom: 36px;
+}
+.success__row {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  align-items: baseline;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+.success__row:first-child { border-top: 1px solid rgba(255, 255, 255, 0.22); }
+.success__label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+.success__value {
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.4;
+  color: #FFFFFF;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+.success__addr {
+  display: block;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 4px;
+}
+
+.success__map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  align-self: center;
+  transition: background-color 180ms var(--ease), color 180ms var(--ease), border-color 180ms var(--ease);
+}
+.success__map-btn:hover,
+.success__map-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  border-color: rgba(255, 255, 255, 0.92);
+  outline: none;
+}
+.success__map-btn svg { transition: transform 180ms var(--ease); }
+.success__map-btn:hover svg { transform: translateX(3px); }
+
+/* ─── CONFETTI / ХЛОПУШКА ──────────────────────────────────
+   Два очага в нижних углах. Частицы летят к центру и вверх,
+   потом падают вниз с инерцией. Тайминги задаются JS через
+   CSS-переменные на каждой частице (--tx, --ty, --rot, --dur).
+   ─────────────────────────────────────────────────────── */
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  overflow: hidden;
+}
+.confetti__piece {
+  position: absolute;
+  bottom: -10px;
+  width: 8px;
+  height: 14px;
+  background: var(--bg-c, var(--accent));
+  border-radius: 1px;
+  opacity: 0;
+  transform: translate(0, 0) rotate(0deg);
+  animation: confettiBurst var(--dur, 1800ms) cubic-bezier(0.18, 0.62, 0.5, 1) var(--delay, 0ms) forwards;
+}
+.confetti__piece--left  { left:  16px; }
+.confetti__piece--right { right: 16px; }
+
+@keyframes confettiBurst {
+  0%   { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+  60%  { opacity: 1; transform: translate(calc(var(--tx) * 0.9), var(--ty)) rotate(calc(var(--rot) * 0.6)); }
+  100% { opacity: 0; transform: translate(var(--tx), calc(var(--ty) + 220px)) rotate(var(--rot)); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   REVEAL — киношное появление блоков при скролле:
+   приподнимается, проявляется и фокусируется (slight unblur)
+   ════════════════════════════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px) scale(0.98);
+  filter: blur(4px);
+  will-change: opacity, transform, filter;
+  transition:
+    opacity   1100ms var(--ease),
+    transform 1100ms var(--ease),
+    filter    1100ms var(--ease);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* respect users with reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   WIDE SCREEN — на десктопе показываем «лист» в центре экрана,
+   контент уже clamp-нут, так что шрифты сами найдут размер.
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+  .content {
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.04);
+  }
+  body { background: #DCD8D1; }
+  .hero { padding-top: 72px; }
+}

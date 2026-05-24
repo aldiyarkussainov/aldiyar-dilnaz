@@ -9,9 +9,24 @@ const SHEET_NAME = "RSVP";
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
-
     const sheet = getOrCreateSheet_(SHEET_NAME);
 
+    // ── DELETE ────────────────────────────────────────
+    // Удаление RSVP по timestamp. Юзер на сайте нажал «Жауапты жою».
+    if (body.action === "delete" && body.timestamp) {
+      const values = sheet.getDataRange().getValues();
+      // идём с конца, чтобы удалить даже если по ошибке несколько с тем же ts
+      for (let i = values.length - 1; i >= 1; i--) {
+        if (String(values[i][0]) === String(body.timestamp)) {
+          sheet.deleteRow(i + 1); // +1 — листы 1-индексированные
+        }
+      }
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: true, deleted: true }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ── CREATE ────────────────────────────────────────
     sheet.appendRow([
       body.timestamp || new Date().toISOString(),
       body.name      || "",

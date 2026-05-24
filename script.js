@@ -602,3 +602,39 @@ document.addEventListener("keydown", (e) => {
     hideSuccess();
   }
 });
+
+// «Жауапты жою» — отмена RSVP:
+//   • Apps Script удаляет строку из Sheets по timestamp
+//   • localStorage очищается (флаг rsvp_done + сохранённая позиция музыки)
+//   • Страница перезагружается — юзер снова попадает на прелоад, как первый раз
+const cancelRsvpBtn = document.getElementById("cancelRsvp");
+if (cancelRsvpBtn) {
+  cancelRsvpBtn.addEventListener("click", () => {
+    if (!confirm("Жауабыңызды жоюды растайсыз ба?")) return;
+
+    let savedTs = null;
+    try {
+      const saved = JSON.parse(localStorage.getItem("rsvp_done") || "null");
+      savedTs = saved && saved.ts;
+    } catch (_) {}
+
+    if (savedTs && CONFIG.rsvpEndpoint.startsWith("http")) {
+      // fire-and-forget с keepalive — успеет долететь даже если страница
+      // начнёт перезагружаться раньше ответа
+      fetch(CONFIG.rsvpEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "delete", timestamp: savedTs }),
+        keepalive: true,
+      }).catch(() => {});
+    }
+
+    try {
+      localStorage.removeItem("rsvp_done");
+      localStorage.removeItem("music_pos");
+    } catch (_) {}
+
+    // полная перезагрузка — юзер увидит прелоад с heartbeat'ом как новый посетитель
+    location.reload();
+  });
+}

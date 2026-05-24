@@ -216,8 +216,10 @@
 
         <!-- доп. поля имён появляются здесь — между attending и адам саны.
              Когда юзер меняет адам саны на 2/3/4, новые input'ы возникают
-             ВЫШЕ select'a; адам саны как был внизу, так и остаётся. -->
-        <div id="extraNames" data-show-if-attending="yes"></div>
+             ВЫШЕ select'a; адам саны как был внизу, так и остаётся.
+             Видимостью управляет :empty в CSS — без анимаций max-height,
+             которые иногда клипали content на iOS Safari. -->
+        <div id="extraNames"></div>
 
         <label class="field" data-show-if-attending="yes">
           <span class="field__label">Адам саны</span>

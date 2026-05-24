@@ -110,6 +110,10 @@ a { color: inherit; text-decoration: none; }
   background: var(--bg);
   display: grid;
   place-items: center;
+  /* блокируем все жесты на оверлее — пользователь не может зумить
+     и не может двигать страницу под прелоадом */
+  touch-action: none;
+  overscroll-behavior: contain;
   transition: opacity 600ms var(--ease), visibility 600ms var(--ease);
 }
 .preload.is-gone { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -383,7 +387,9 @@ body.is-locked .content { opacity: 0; }
      ease-in-out, бесконечный цикл. Не spring и не bounce. */
   animation: scrollHint 1.8s ease-in-out infinite;
 }
-.hero__scroll:hover { color: var(--ink); }
+@media (hover: hover) {
+  .hero__scroll:hover { color: var(--ink); }
+}
 
 @keyframes scrollHint {
   0%, 100% {
@@ -773,19 +779,28 @@ body.is-locked .content { opacity: 0; }
   background: rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
-  transition: background-color 180ms var(--ease), border-color 180ms var(--ease);
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 120ms var(--ease), border-color 120ms var(--ease);
 }
-.venue__map-btn:hover,
-.venue__map-btn:focus-visible {
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--ink);
-  border-color: rgba(255, 255, 255, 0.92);
-  outline: none;
+/* hover-эффект только на устройствах с курсором — на touch он залипал
+   и требовал двойного тапа */
+@media (hover: hover) {
+  .venue__map-btn:hover,
+  .venue__map-btn:focus-visible {
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink);
+    border-color: rgba(255, 255, 255, 0.92);
+    outline: none;
+  }
+  .venue__map-btn:hover svg { transform: translateX(3px); }
+}
+/* На touch: тап сразу даёт лёгкую прозрачность — без задержки, переход на link */
+.venue__map-btn:active {
+  background: rgba(0, 0, 0, 0.32);
 }
 .venue__map-btn svg {
   transition: transform 180ms var(--ease);
 }
-.venue__map-btn:hover svg { transform: translateX(3px); }
 
 .sep {
   display: inline-block;
@@ -898,10 +913,16 @@ body.is-locked .content { opacity: 0; }
   text-transform: uppercase;
   transition: background-color 180ms var(--ease), color 180ms var(--ease);
 }
-.submit:hover, .submit:focus-visible {
+@media (hover: hover) {
+  .submit:hover, .submit:focus-visible {
+    background: var(--ink);
+    color: var(--bg);
+    outline: none;
+  }
+}
+.submit:active {
   background: var(--ink);
   color: var(--bg);
-  outline: none;
 }
 .submit[disabled] { opacity: 0.5; cursor: wait; }
 
@@ -1099,9 +1120,12 @@ body.is-locked .content { opacity: 0; }
   border-radius: var(--r-sm);
   transition: background-color 180ms var(--ease);
 }
-.success__back:hover { background: rgba(0, 0, 0, 0.36); }
 .success__back svg { transition: transform 180ms var(--ease); }
-.success__back:hover svg { transform: translateX(-3px); }
+@media (hover: hover) {
+  .success__back:hover { background: rgba(0, 0, 0, 0.36); }
+  .success__back:hover svg { transform: translateX(-3px); }
+}
+.success__back:active { background: rgba(0, 0, 0, 0.36); }
 
 .success__body {
   position: relative;
@@ -1188,18 +1212,24 @@ body.is-locked .content { opacity: 0; }
   background: rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
+  -webkit-tap-highlight-color: transparent;
   align-self: center;
-  transition: background-color 180ms var(--ease), color 180ms var(--ease), border-color 180ms var(--ease);
+  transition: background-color 120ms var(--ease), color 120ms var(--ease), border-color 120ms var(--ease);
 }
-.success__map-btn:hover,
-.success__map-btn:focus-visible {
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--ink);
-  border-color: rgba(255, 255, 255, 0.92);
-  outline: none;
+@media (hover: hover) {
+  .success__map-btn:hover,
+  .success__map-btn:focus-visible {
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink);
+    border-color: rgba(255, 255, 255, 0.92);
+    outline: none;
+  }
+  .success__map-btn:hover svg { transform: translateX(3px); }
+}
+.success__map-btn:active {
+  background: rgba(0, 0, 0, 0.32);
 }
 .success__map-btn svg { transition: transform 180ms var(--ease); }
-.success__map-btn:hover svg { transform: translateX(3px); }
 
 /* ─── CONFETTI / ХЛОПУШКА ──────────────────────────────────
    Два очага в нижних углах. Частицы летят к центру и вверх,

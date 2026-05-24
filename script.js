@@ -132,11 +132,9 @@ function tryStartMusic() {
   }
 }
 
-// Показываем кнопку уже после того, как прелоад полностью ушёл
+// Показываем кнопку и вешаем first-gesture listener ТОЛЬКО после прелоада.
+// Иначе тап по экрану во время heartbeat-анимации мог стартовать музыку.
 const showMusicAt = TIMING.fadeIn + TIMING.beatCycle * TIMING.beatTimes + TIMING.zoom;
-setTimeout(() => showMusicButton(true), prefersReducedMotion ? 0 : showMusicAt);
-
-// Первый жест → пробуем включить
 const FIRST_GESTURE_EVENTS = ["pointerdown", "touchstart", "keydown"];
 const onFirstGesture = () => {
   tryStartMusic();
@@ -144,9 +142,15 @@ const onFirstGesture = () => {
     document.removeEventListener(ev, onFirstGesture, true)
   );
 };
-FIRST_GESTURE_EVENTS.forEach((ev) =>
-  document.addEventListener(ev, onFirstGesture, { capture: true, passive: true })
-);
+
+function activateMusicLayer() {
+  showMusicButton(true);
+  FIRST_GESTURE_EVENTS.forEach((ev) =>
+    document.addEventListener(ev, onFirstGesture, { capture: true, passive: true })
+  );
+}
+
+setTimeout(activateMusicLayer, prefersReducedMotion ? 0 : showMusicAt);
 
 // Флаг: было ли воспроизведение приостановлено внешним фактором
 // (сворачивание браузера, блокировка экрана, переключение таба).
@@ -439,6 +443,15 @@ form.addEventListener("submit", (e) => {
     } catch (_) {}
   }
 
+  // запоминаем что юзер уже подал форму — при возврате на сайт
+  // он сразу попадёт на success, а не на главную (нет дубликатов RSVP)
+  try {
+    localStorage.setItem(
+      "rsvp_done",
+      JSON.stringify({ attending: data.attending, ts: payload.timestamp })
+    );
+  } catch (_) {}
+
   // мгновенно открываем success-экран
   showSuccess(data.attending === "yes");
 
@@ -455,7 +468,7 @@ const successBack   = document.getElementById("successBack");
 const successSub    = document.getElementById("successSub");
 const confettiBox   = document.getElementById("confetti");
 
-function showSuccess(attending) {
+function showSuccess(attending, opts) {
   // подгоняем текст под ответ
   if (successSub) {
     successSub.textContent = attending
@@ -468,11 +481,28 @@ function showSuccess(attending) {
   successScreen.scrollTop = 0;
   document.body.style.overflow = "hidden";
 
-  // конфетти только при «Иә, келемін»
-  if (attending) {
+  // конфетти запускаем только при положительном ответе И только если
+  // это первый показ — при повторном открытии (return-visit) не пускаем
+  if (attending && !(opts && opts.skipConfetti)) {
     requestAnimationFrame(spawnConfetti);
   }
 }
+
+// При перезагрузке: если юзер уже отправлял форму с этого устройства,
+// сразу открываем success-экран — никаких дублей RSVP.
+try {
+  const saved = JSON.parse(localStorage.getItem("rsvp_done") || "null");
+  if (saved && saved.attending) {
+    // прячем прелоад мгновенно и без анимации
+    document.body.classList.remove("is-locked");
+    preload.classList.add("is-gone");
+    content.setAttribute("aria-hidden", "false");
+    // показываем success без конфетти
+    showSuccess(saved.attending === "yes", { skipConfetti: true });
+    // активируем музыку чуть позже, без timeline
+    setTimeout(activateMusicLayer, 100);
+  }
+} catch (_) {}
 
 function hideSuccess() {
   successScreen.classList.remove("is-shown");

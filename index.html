@@ -214,6 +214,11 @@
           </label>
         </fieldset>
 
+        <!-- доп. поля имён появляются здесь — между attending и адам саны.
+             Когда юзер меняет адам саны на 2/3/4, новые input'ы возникают
+             ВЫШЕ select'a; адам саны как был внизу, так и остаётся. -->
+        <div id="extraNames" data-show-if-attending="yes"></div>
+
         <label class="field" data-show-if-attending="yes">
           <span class="field__label">Адам саны</span>
           <select name="guests" id="guestsSelect">
@@ -223,9 +228,6 @@
             <option value="4">4 адам</option>
           </select>
         </label>
-
-        <!-- доп. поля имён появляются здесь динамически (по числу гостей) -->
-        <div id="extraNames" data-show-if-attending="yes"></div>
 
         <button type="submit" class="submit">
           <span class="submit__label">Жіберу</span>

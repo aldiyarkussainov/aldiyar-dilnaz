@@ -896,11 +896,23 @@ body.is-locked .content { opacity: 0; }
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: max-height 240ms var(--ease), opacity 200ms var(--ease);
+  transition: max-height 300ms var(--ease), opacity 220ms var(--ease);
 }
 [data-show-if-attending].is-visible {
-  max-height: 80px;
+  /* достаточно высоты для select-строки или до 3 input'ов имён */
+  max-height: 320px;
   opacity: 1;
+}
+
+/* контейнер для inputов имён доп. гостей — flex с тем же gap, что у формы */
+#extraNames {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+#extraNames:empty {
+  /* пусто (1 гость) — контейнер невидим, не съедает gap у формы */
+  display: none;
 }
 
 .submit {

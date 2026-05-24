@@ -281,7 +281,7 @@ body.is-locked .content { opacity: 0; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 36% center;
+  object-position: center;
 }
 /* плейсхолдер на случай отсутствия фото */
 .hero__photo::after {

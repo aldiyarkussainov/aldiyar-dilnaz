@@ -73,7 +73,7 @@ body {
   position: relative;
   font-family: var(--f-body);
   font-weight: 300;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.65;
   color: var(--ink);
   background: var(--bg);
@@ -241,7 +241,7 @@ body.is-locked .content { opacity: 0; }
 .section__title {
   font-family: var(--f-body);
   font-weight: 400;
-  font-size: clamp(22px, 6vw, 28px);
+  font-size: clamp(26px, 7vw, 34px);
   line-height: 1.25;
   letter-spacing: 0;
   color: var(--ink);
@@ -250,7 +250,7 @@ body.is-locked .content { opacity: 0; }
 }
 
 .eyebrow {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -328,7 +328,7 @@ body.is-locked .content { opacity: 0; }
 .hero__names {
   font-family: var(--f-serif);
   font-weight: 400;
-  font-size: clamp(36px, 12vw, 52px);
+  font-size: clamp(42px, 14vw, 60px);
   line-height: 1;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -337,10 +337,10 @@ body.is-locked .content { opacity: 0; }
 }
 .hero__date {
   font-family: var(--f-serif);
-  font-size: clamp(17px, 5vw, 22px);
+  font-size: clamp(20px, 5.6vw, 26px);
   font-weight: 400;
   color: var(--ink);
-  margin-top: 16px;
+  margin-top: 18px;
   letter-spacing: 0.22em;
   font-variant-numeric: tabular-nums;
 }
@@ -411,8 +411,8 @@ body.is-locked .content { opacity: 0; }
 }
 
 .invite__body {
-  font-size: 15px;
-  line-height: 1.85;
+  font-size: 17px;
+  line-height: 1.75;
   color: var(--ink-soft);
   max-width: 30ch;
   margin: 0 auto 36px;
@@ -473,7 +473,7 @@ body.is-locked .content { opacity: 0; }
 .invite__signature {
   font-family: var(--f-script);
   /* рукописные шрифты обычно крупнее, но визуально легче — поднимаем размер */
-  font-size: 34px;
+  font-size: 40px;
   line-height: 1.1;
   color: var(--ink);
 }
@@ -542,13 +542,13 @@ body.is-locked .content { opacity: 0; }
 .countdown__title {
   font-family: var(--f-body);
   font-weight: 400;
-  font-size: clamp(22px, 6vw, 28px);
+  font-size: clamp(26px, 7vw, 34px);
   line-height: 1.25;
   letter-spacing: 0;
   color: #FFFFFF;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   white-space: nowrap;
-  margin-top: 22px;
+  margin-top: 24px;
 }
 
 .countdown__timer {
@@ -567,7 +567,7 @@ body.is-locked .content { opacity: 0; }
 .countdown__num {
   font-family: var(--f-body);
   font-weight: 300;
-  font-size: clamp(36px, 11vw, 52px);
+  font-size: clamp(42px, 13vw, 60px);
   line-height: 1;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
@@ -575,7 +575,7 @@ body.is-locked .content { opacity: 0; }
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
 }
 .countdown__label {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.78);
@@ -584,7 +584,7 @@ body.is-locked .content { opacity: 0; }
 .countdown__sep {
   font-family: var(--f-body);
   font-weight: 300;
-  font-size: clamp(32px, 10vw, 46px);
+  font-size: clamp(38px, 12vw, 54px);
   line-height: 1;
   color: rgba(255, 255, 255, 0.55);
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
@@ -626,7 +626,7 @@ body.is-locked .content { opacity: 0; }
 .marquee__item {
   font-family: var(--f-body);
   font-weight: 400;
-  font-size: clamp(18px, 4.5vw, 22px);
+  font-size: clamp(22px, 5.5vw, 26px);
   letter-spacing: 0.05em;
   color: var(--ink);
 }
@@ -635,7 +635,7 @@ body.is-locked .content { opacity: 0; }
   font-weight: 500;
 }
 .marquee__dot {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--ink-faint);
 }
 @keyframes marqueeRun {
@@ -651,7 +651,7 @@ body.is-locked .content { opacity: 0; }
 .calendar__month {
   font-family: var(--f-body);
   font-weight: 400;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -666,7 +666,7 @@ body.is-locked .content { opacity: 0; }
   font-variant-numeric: tabular-nums;
 }
 .calendar__dow {
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink-faint);
@@ -676,7 +676,7 @@ body.is-locked .content { opacity: 0; }
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--ink-soft);
   border-radius: 999px;
 }
@@ -743,16 +743,16 @@ body.is-locked .content { opacity: 0; }
 .venue__name {
   font-family: var(--f-body);
   font-weight: 500;
-  font-size: clamp(22px, 6vw, 28px);
+  font-size: clamp(26px, 7vw, 32px);
   line-height: 1.2;
   color: #FFFFFF;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 .venue__addr {
   font-family: var(--f-body);
   font-weight: 400;
-  font-size: 14px;
+  font-size: 16px;
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.55;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
@@ -763,10 +763,10 @@ body.is-locked .content { opacity: 0; }
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 26px;
+  padding: 16px 28px;
   border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: var(--r-sm);
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #FFFFFF;
@@ -826,11 +826,11 @@ body.is-locked .content { opacity: 0; }
 .field { display: block; }
 .field__label {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .field input[type="text"],
 .field select,
@@ -861,7 +861,7 @@ body.is-locked .content { opacity: 0; }
   gap: 12px;
   padding: 10px 0;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
 }
 .radio input {
   appearance: none;
@@ -911,10 +911,10 @@ body.is-locked .content { opacity: 0; }
 
 .submit {
   align-self: flex-start;
-  padding: 14px 36px;
+  padding: 16px 40px;
   border: 1px solid var(--ink);
   border-radius: var(--r-sm);
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   transition: background-color 180ms var(--ease), color 180ms var(--ease);
@@ -933,7 +933,7 @@ body.is-locked .content { opacity: 0; }
 .submit[disabled] { opacity: 0.5; cursor: wait; }
 
 .form__status {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-soft);
   min-height: 1.2em;
 }
@@ -1005,17 +1005,17 @@ body.is-locked .content { opacity: 0; }
 .outro__text {
   font-family: var(--f-body);
   font-weight: 400;
-  font-size: clamp(17px, 4.8vw, 21px);
+  font-size: clamp(20px, 5.5vw, 26px);
   line-height: 1.45;
   letter-spacing: 0.01em;
   color: var(--bg);
   max-width: 26ch;
-  margin: 0 auto 32px;
+  margin: 0 auto 36px;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
 }
 .outro__mono {
   font-family: var(--f-script);
-  font-size: clamp(72px, 22vw, 110px);
+  font-size: clamp(86px, 25vw, 128px);
   line-height: 1;
   letter-spacing: 0;
   color: var(--bg);
@@ -1023,10 +1023,10 @@ body.is-locked .content { opacity: 0; }
 }
 .outro__date {
   font-family: var(--f-body);
-  font-size: clamp(18px, 5vw, 22px);
+  font-size: clamp(20px, 5.5vw, 26px);
   font-weight: 400;
   color: var(--bg);
-  margin-top: 20px;
+  margin-top: 22px;
   letter-spacing: 0.32em;
   font-variant-numeric: tabular-nums;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
@@ -1116,7 +1116,7 @@ body.is-locked .content { opacity: 0; }
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #FFFFFF;
@@ -1157,19 +1157,19 @@ body.is-locked .content { opacity: 0; }
 .success__title {
   font-family: var(--f-body);
   font-weight: 400;
-  font-size: clamp(24px, 6.5vw, 30px);
+  font-size: clamp(28px, 7.5vw, 36px);
   line-height: 1.25;
   color: #FFFFFF;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
-  margin: 12px 0 14px;
+  margin: 14px 0 16px;
 }
 .success__sub {
   font-family: var(--f-body);
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
-  margin-bottom: 40px;
+  margin-bottom: 44px;
 }
 
 .success__info {
@@ -1185,33 +1185,33 @@ body.is-locked .content { opacity: 0; }
 }
 .success__row:first-child { border-top: 1px solid rgba(255, 255, 255, 0.22); }
 .success__label {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.65);
 }
 .success__value {
   font-family: var(--f-body);
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1.4;
   color: #FFFFFF;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
 }
 .success__addr {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   color: rgba(255, 255, 255, 0.75);
-  margin-top: 4px;
+  margin-top: 5px;
 }
 
 .success__map-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 26px;
+  padding: 16px 28px;
   border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: var(--r-sm);
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #FFFFFF;
@@ -1244,7 +1244,7 @@ body.is-locked .content { opacity: 0; }
   padding: 6px 4px;
   font-family: var(--f-body);
   font-weight: 300;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: none;
   color: rgba(255, 255, 255, 0.45);

@@ -336,12 +336,12 @@ body.is-locked .content { opacity: 0; }
   white-space: nowrap;
 }
 .hero__date {
-  font-family: var(--f-serif);
-  font-size: clamp(17px, 4.6vw, 22px);
+  font-family: var(--f-body);
+  font-size: clamp(15px, 4vw, 19px);
   font-weight: 400;
   color: var(--ink);
   margin-top: 16px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   font-variant-numeric: tabular-nums;
 }
 

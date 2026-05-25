@@ -328,7 +328,7 @@ body.is-locked .content { opacity: 0; }
 .hero__names {
   font-family: var(--f-serif);
   font-weight: 400;
-  font-size: clamp(50px, 16vw, 72px);
+  font-size: clamp(34px, 11vw, 48px);
   line-height: 1;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -337,10 +337,10 @@ body.is-locked .content { opacity: 0; }
 }
 .hero__date {
   font-family: var(--f-serif);
-  font-size: clamp(23px, 6.4vw, 30px);
+  font-size: clamp(17px, 4.6vw, 22px);
   font-weight: 400;
   color: var(--ink);
-  margin-top: 20px;
+  margin-top: 16px;
   letter-spacing: 0.22em;
   font-variant-numeric: tabular-nums;
 }
@@ -567,7 +567,7 @@ body.is-locked .content { opacity: 0; }
 .countdown__num {
   font-family: var(--f-body);
   font-weight: 300;
-  font-size: clamp(50px, 15vw, 70px);
+  font-size: clamp(32px, 10vw, 48px);
   line-height: 1;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
@@ -575,7 +575,7 @@ body.is-locked .content { opacity: 0; }
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
 }
 .countdown__label {
-  font-size: 13px;
+  font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.78);
@@ -584,7 +584,7 @@ body.is-locked .content { opacity: 0; }
 .countdown__sep {
   font-family: var(--f-body);
   font-weight: 300;
-  font-size: clamp(44px, 14vw, 62px);
+  font-size: clamp(28px, 9vw, 42px);
   line-height: 1;
   color: rgba(255, 255, 255, 0.55);
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);

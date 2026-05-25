@@ -115,6 +115,14 @@ if (prefersReducedMotion) {
 let musicReady = false;
 const MUSIC_POS_KEY = "music_pos";
 
+// СВЕЖАЯ ЗАГРУЗКА СТРАНИЦЫ: удаляем любую сохранённую позицию.
+// Музыка стартует с нуля, какие бы сессии ни были раньше.
+// (При сворачивании/блокировке экрана позиция пересохранится заново
+// и используется только в этой же сессии через visibilitychange.)
+try {
+  localStorage.removeItem(MUSIC_POS_KEY);
+} catch (_) {}
+
 function showMusicButton(muted = true) {
   musicBtn.classList.add("is-shown");
   musicBtn.classList.toggle("is-muted", muted);

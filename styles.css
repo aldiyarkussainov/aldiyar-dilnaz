@@ -695,7 +695,7 @@ body.is-locked .content { opacity: 0; }
   border-radius: 999px;
 }
 
-/* «сцена» — фото-фон с тёмной вуалью, контент поверх */
+/* «сцена» — фото-фон с направленной вуалью, контент прижат к низу */
 .venue__stage {
   position: relative;
   margin: 0 -32px;
@@ -704,9 +704,10 @@ body.is-locked .content { opacity: 0; }
   background: var(--bg-soft);
   isolation: isolate;
   display: flex;
-  align-items: center;
+  /* контент внизу — верхняя часть фото (с лицами) остаётся чистой */
+  align-items: flex-end;
   justify-content: center;
-  padding: 32px;
+  padding: 32px 32px 48px;
 }
 .venue__bg {
   position: absolute;
@@ -716,6 +717,7 @@ body.is-locked .content { opacity: 0; }
   object-fit: cover;
   z-index: 0;
 }
+/* направленная тёмная вуаль: верх почти прозрачен, плотнеет к низу */
 .venue__stage::after {
   content: "";
   position: absolute;
@@ -723,9 +725,10 @@ body.is-locked .content { opacity: 0; }
   z-index: 1;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.42) 0%,
-    rgba(0, 0, 0, 0.34) 45%,
-    rgba(0, 0, 0, 0.52) 100%
+    rgba(0, 0, 0, 0.05) 0%,
+    rgba(0, 0, 0, 0.12) 40%,
+    rgba(0, 0, 0, 0.42) 75%,
+    rgba(0, 0, 0, 0.62) 100%
   );
   pointer-events: none;
 }

@@ -144,7 +144,11 @@ function restoreMusicPos() {
 function tryStartMusic() {
   if (musicReady) return;
   bgm.volume = 0.55;
-  restoreMusicPos();
+  // НЕ восстанавливаем позицию: при свежей загрузке страницы (F5, новое
+  // открытие по ссылке) музыка должна играть с начала. Сохранённая
+  // позиция используется только в visibilitychange — резюм после
+  // сворачивания / блокировки экрана.
+  bgm.currentTime = 0;
   const p = bgm.play();
   if (p && typeof p.then === "function") {
     p.then(() => {
